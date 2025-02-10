@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 interface RiddleOverlayProps {
   riddle: {
@@ -28,13 +28,13 @@ export function RiddleOverlay({
       <div className="absolute top-4 right-4 bg-black/50 text-white px-4 py-2 rounded-lg">
         Score: {score}/{totalLevels}
       </div>
-      
+
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 max-w-md w-full px-4">
         <div className="bg-black/50 text-white p-6 rounded-lg pointer-events-auto">
           {isComplete ? (
             <div className="text-center">
               <h1 className="text-2xl font-bold mb-4">Congratulations!</h1>
-              <p className="text-lg mb-6">You've completed all levels!</p>
+              <p className="text-lg mb-6">You&apos;ve completed all levels!</p>
               <button
                 onClick={() => window.location.reload()}
                 className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg"
@@ -73,4 +73,4 @@ export function RiddleOverlay({
       </div>
     </div>
   );
-} 
+}

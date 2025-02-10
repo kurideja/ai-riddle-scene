@@ -1,12 +1,6 @@
 "use client";
 import { Canvas, useFrame } from "@react-three/fiber";
-import {
-  PerspectiveCamera,
-  Environment,
-  Text,
-  EffectComposer,
-  Bloom,
-} from "@react-three/drei";
+import { PerspectiveCamera, Environment, Text } from "@react-three/drei";
 import { useRef, useMemo, useState, useEffect } from "react";
 import type { PerspectiveCamera as PerspectiveCameraType } from "three";
 import { CanvasTexture } from "three";
