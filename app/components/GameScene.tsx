@@ -1,81 +1,80 @@
 "use client";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import {
-  OrbitControls,
-  PerspectiveCamera,
-  Environment,
-} from "@react-three/drei";
-import { useSpring, animated } from "@react-spring/three";
-import { useEffect, useRef, useState } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { PerspectiveCamera, Environment } from "@react-three/drei";
+import { useRef, useMemo } from "react";
 import type { PerspectiveCamera as PerspectiveCameraType } from "three";
+import { CanvasTexture } from "three";
+import * as THREE from "three";
 
-const MAX_LEVELS = 2;
-const SPHERE_RADIUS = 0.3;
-const SPACING = 1;
-const LEVEL_HEIGHT = 2; // Vertical spacing between levels
+const SPHERE_RADIUS = 0.4;
+const SPACING = 2;
+const LEVEL_HEIGHT = 5;
 
-// Debug panel component
-function DebugPanel({
-  level,
-  setLevel,
-}: {
-  level: number;
-  setLevel: (level: number) => void;
-}) {
-  return (
-    <div className="absolute top-4 left-4 bg-black/50 text-white p-4 rounded-lg space-y-2 pointer-events-auto">
-      <div>Debug Controls</div>
-      <div className="flex items-center gap-2">
-        <input
-          type="range"
-          min="0"
-          max={MAX_LEVELS}
-          value={level}
-          onChange={(e) => setLevel(Number(e.target.value))}
-          className="w-32"
-        />
-        <span>
-          Level: {level}/{MAX_LEVELS}
-        </span>
-      </div>
-      <div className="flex gap-2">
-        <button
-          onClick={() => setLevel(Math.max(0, level - 1))}
-          className="px-2 py-1 bg-white/10 rounded hover:bg-white/20"
-        >
-          Prev
-        </button>
-        <button
-          onClick={() => setLevel(Math.min(MAX_LEVELS, level + 1))}
-          className="px-2 py-1 bg-white/10 rounded hover:bg-white/20"
-        >
-          Next
-        </button>
-      </div>
-    </div>
+function createCreepyTexture() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 512;
+  canvas.height = 512;
+  const ctx = canvas.getContext("2d")!;
+
+  // Create radial gradient for a glowing effect
+  const gradient = ctx.createRadialGradient(
+    256, 256, 50,  // Inner circle
+    256, 256, 256  // Outer circle
   );
+  gradient.addColorStop(0, '#ffffff');
+  gradient.addColorStop(0.4, 'transparent');
+
+  // Background
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Draw glowing question mark
+  ctx.fillStyle = gradient;
+  ctx.font = "bold 400px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("?", canvas.width / 2, canvas.height / 2);
+
+  return new CanvasTexture(canvas);
 }
 
 function Sphere({ position }: { position: [number, number, number] }) {
+  const texture = useMemo(() => createCreepyTexture(), []);
+  const meshRef = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (meshRef.current) {
+      // Slower, more ominous rotation
+      meshRef.current.rotation.y += 0.005;
+      // Subtle floating effect
+      meshRef.current.position.y += Math.sin(state.clock.elapsedTime) * 0.0001;
+    }
+  });
+
   return (
-    <mesh position={position}>
-      <sphereGeometry args={[SPHERE_RADIUS, 32, 32]} />
-      <meshStandardMaterial
-        color="#4169E1" // royalblue
-        metalness={0.9}
-        roughness={0.1}
+    <mesh ref={meshRef} position={position}>
+      <sphereGeometry args={[SPHERE_RADIUS, 64, 64]} />
+      <meshPhysicalMaterial
+        color="#000000"
+        metalness={0}
+        roughness={0.2}
+        transmission={0.95} // Glass-like transparency
+        thickness={0.5}    // Glass thickness
+        map={texture}
+        emissiveMap={texture}
+        emissive="#ff0000"
+        emissiveIntensity={2}
         envMapIntensity={1}
       />
     </mesh>
   );
 }
 
-function SphereArrangement() {
+function SphereArrangement({ totalLevels }: { totalLevels: number }) {
   const spheres: React.ReactNode[] = [];
   const basePositions = createLevelPositions();
 
-  // Create multiple rings of spheres
-  for (let level = 0; level < MAX_LEVELS; level++) {
+  for (let level = 0; level < totalLevels; level++) {
     basePositions.forEach((position, index) => {
       spheres.push(
         <Sphere
@@ -93,20 +92,22 @@ function SphereArrangement() {
   return <>{spheres}</>;
 }
 
-interface GameSceneProps {
+function MovingCamera({
+  progress,
+  totalLevels,
+}: {
   progress: number;
-}
-
-function MovingCamera({ debugLevel }: { debugLevel: number }) {
+  totalLevels: number;
+}) {
   const cameraRef = useRef<PerspectiveCameraType>(null);
 
   useFrame(() => {
     if (cameraRef.current) {
-      const targetZ = -debugLevel * LEVEL_HEIGHT + 3;
+      const targetZ = LEVEL_HEIGHT * (totalLevels - progress);
       const currentZ = cameraRef.current.position.z;
-      // Smooth camera movement
+
       if (Math.abs(currentZ - targetZ) > 0.01) {
-        cameraRef.current.position.z += (targetZ - currentZ) * 0.1; // Smooth transition
+        cameraRef.current.position.z += (targetZ - currentZ) * 0.1;
       }
     }
   });
@@ -114,37 +115,47 @@ function MovingCamera({ debugLevel }: { debugLevel: number }) {
   return (
     <PerspectiveCamera
       ref={cameraRef}
-      position={[0, 0, 3]} // Start slightly above center
-      fov={75}
+      position={[0, 0, totalLevels * LEVEL_HEIGHT]}
+      fov={20}
       makeDefault
     />
   );
 }
 
-export function GameScene({ progress }: GameSceneProps) {
-  const [debugLevel, setDebugLevel] = useState(0);
+interface GameSceneProps {
+  progress: number;
+  totalLevels: number;
+}
 
+export function GameScene({ progress, totalLevels }: GameSceneProps) {
   return (
     <div className="relative w-full h-full">
-      <Canvas>
-        <MovingCamera debugLevel={debugLevel} />
-        <Environment preset="city" />
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} />
-        <SphereArrangement />
+      <Canvas shadows>
+        <color attach="background" args={["#000"]} />
+        <fog attach="fog" args={["#000", 2, 20]} />
+        <MovingCamera progress={progress} totalLevels={totalLevels} />
+        <Environment preset="warehouse" />
+        <ambientLight intensity={0.05} />
+        <pointLight position={[0, 5, 5]} intensity={0.2} color="#ff0000" />
+        <SphereArrangement totalLevels={totalLevels} />
       </Canvas>
-      <DebugPanel level={debugLevel} setLevel={setDebugLevel} />
     </div>
   );
 }
 
 function createLevelPositions() {
   const positions: [number, number, number][] = [];
+  const GRID_SIZE = 10;
+  const HALF_GRID = GRID_SIZE / 2;
 
-  positions.push([-0.5, -0.5, 0]);
-  positions.push([0.5, -0.5, 0]);
-  positions.push([-0.5, 0.5, 0]);
-  positions.push([0.5, 0.5, 0]);
+  // Create a 10x10 grid centered around 0,0
+  for (let i = 0; i < GRID_SIZE; i++) {
+    for (let j = 0; j < GRID_SIZE; j++) {
+      const x = (i - HALF_GRID + 0.5) * SPACING;
+      const y = (j - HALF_GRID + 0.5) * SPACING;
+      positions.push([x, y, 0]);
+    }
+  }
 
   return positions;
 }
