@@ -11,7 +11,7 @@ export function RiddleGame() {
   return (
     <div className="fixed inset-0">
       <div className="absolute inset-0">
-        <GameScene progress={0} />
+        <GameScene progress={score} />
       </div>
 
       <RiddleOverlay
