@@ -8,12 +8,17 @@ export function RiddleGame() {
   const { riddle, score, isLoading, checkAnswer, generateNewRiddle } =
     useRiddleLogic();
 
-  const totalLevels = 10; // You can set this to any number you want
+  const totalLevels = 10;
+  const isComplete = score >= totalLevels;
 
   return (
     <div className="fixed inset-0">
       <div className="absolute inset-0">
-        <GameScene progress={score} totalLevels={totalLevels} />
+        <GameScene 
+          progress={score} 
+          totalLevels={totalLevels}
+          isComplete={isComplete}
+        />
       </div>
 
       <RiddleOverlay
@@ -22,6 +27,8 @@ export function RiddleGame() {
         isLoading={isLoading}
         onAnswer={checkAnswer}
         onNewRiddle={generateNewRiddle}
+        isComplete={isComplete}
+        totalLevels={totalLevels}
       />
     </div>
   );

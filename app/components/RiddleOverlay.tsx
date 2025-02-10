@@ -10,6 +10,8 @@ interface RiddleOverlayProps {
   isLoading: boolean;
   onAnswer: (answer: string) => void;
   onNewRiddle: () => void;
+  isComplete?: boolean;
+  totalLevels: number;
 }
 
 export function RiddleOverlay({
@@ -18,16 +20,29 @@ export function RiddleOverlay({
   isLoading,
   onAnswer,
   onNewRiddle,
+  isComplete,
+  totalLevels,
 }: RiddleOverlayProps) {
   return (
     <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
       <div className="absolute top-4 right-4 bg-black/50 text-white px-4 py-2 rounded-lg">
-        Score: {score}
+        Score: {score}/{totalLevels}
       </div>
       
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 max-w-md w-full px-4">
         <div className="bg-black/50 text-white p-6 rounded-lg pointer-events-auto">
-          {isLoading ? (
+          {isComplete ? (
+            <div className="text-center">
+              <h1 className="text-2xl font-bold mb-4">Congratulations!</h1>
+              <p className="text-lg mb-6">You've completed all levels!</p>
+              <button
+                onClick={() => window.location.reload()}
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg"
+              >
+                Play Again
+              </button>
+            </div>
+          ) : isLoading ? (
             <div className="text-center">Loading new riddle...</div>
           ) : riddle ? (
             <>

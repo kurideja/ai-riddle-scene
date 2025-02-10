@@ -31,6 +31,9 @@ export function useRiddleLogic() {
         riddle.choices[riddle.correctIndex].toLowerCase()
       ) {
         setScore((prev) => prev + 1);
+      } else {
+        // Decrease score by 2 but not below 0
+        setScore((prev) => Math.max(0, prev - 2));
       }
 
       generateNewRiddle();
