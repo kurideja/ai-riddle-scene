@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Riddle Scene
 
-## Getting Started
+> Note: Even this README was generated using Claude AI, staying true to the project's AI-assisted development approach.
 
-First, run the development server:
+An experimental project exploring AI-assisted development through an interactive 3D riddle game. The game features procedurally generated riddles using GPT-4, rendered in a dynamic 3D environment.
+
+## 🤖 AI Integration
+
+This project was developed with AI tools:
+- GPT-4 for generating dynamic riddles via OpenAI API
+- Claude AI for development guidance
+- [Cursor](https://cursor.sh/) editor for AI-assisted coding
+
+## 🛠️ Tech Stack
+
+- [Next.js](https://nextjs.org/) (v15.1.6) with Turbopack
+- [React](https://reactjs.org/) (v19.0.0)
+- [Three.js](https://threejs.org/) (v0.173.0) with React Three Fiber
+- [OpenAI API](https://openai.com/api/) (v4.83.0)
+- [TailwindCSS](https://tailwindcss.com/) (v3.4.1)
+- [TypeScript](https://www.typescriptlang.org/) (v5)
+
+## 🎮 Features
+
+- 3D interactive environment with dynamic lighting and animations
+- Procedurally generated riddles using GPT-4
+- Progressive difficulty scaling
+- Responsive design for both desktop and mobile
+- Score tracking system
+
+## 🚀 Getting Started
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone [your-repo-url]
+cd ai-riddle-scene
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+Create a `.env` file with:
+```
+OPENAI_API_KEY=your_api_key_here
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Run the development server:
+```bash
+npm run dev
+```
 
-## Learn More
+Open [http://localhost:3000](http://localhost:3000) to play the game.
 
-To learn more about Next.js, take a look at the following resources:
+## 🔑 Environment Variables
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- `OPENAI_API_KEY`: Your OpenAI API key (required for riddle generation)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📝 Notes
 
-## Deploy on Vercel
+- The game uses GPT-4 to generate unique riddles for each level
+- The 3D scene adapts to device capabilities (mobile/desktop)
+- Incorrect answers decrease score to add challenge
+- Uses edge runtime for API routes
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🌐 Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Deploy on [Vercel](https://vercel.com) for the best experience. Make sure to:
+1. Configure environment variables in your Vercel project settings
+2. Enable edge functions for optimal performance
+
+## 📄 License
+
+[Your license here]
