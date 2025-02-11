@@ -7,39 +7,43 @@ import { CanvasTexture } from "three";
 import * as THREE from "three";
 
 const SPHERE_RADIUS = 0.4;
-const SPACING = 2;
+const SPACING = 1.5;
 const LEVEL_HEIGHT = 5;
+const MOBILE_GRID_SIZE = 4; // Reduced from 5
+const DESKTOP_GRID_SIZE = 6; // Reduced from 10
 
 function createCreepyTexture() {
   const canvas = document.createElement("canvas");
-  canvas.width = 512;
-  canvas.height = 512;
+  canvas.width = 256; // Reduced from 512
+  canvas.height = 256; // Reduced from 512
   const ctx = canvas.getContext("2d")!;
 
-  // Create radial gradient for a glowing effect
+  // Create simpler gradient
   const gradient = ctx.createRadialGradient(
-    256,
-    256,
-    50, // Inner circle
-    256,
-    256,
-    256 // Outer circle
+    128,
+    128,
+    25, // Adjusted for new canvas size
+    128,
+    128,
+    128 // Adjusted for new canvas size
   );
   gradient.addColorStop(0, "#ffffff");
   gradient.addColorStop(0.4, "transparent");
 
-  // Background
   ctx.fillStyle = "black";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Draw glowing question mark
   ctx.fillStyle = gradient;
-  ctx.font = "bold 400px Arial";
+  ctx.font = "bold 200px Arial"; // Reduced from 400px
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.fillText("?", canvas.width / 2, canvas.height / 2);
 
   return new CanvasTexture(canvas);
+}
+
+function isMobile() {
+  return typeof window !== "undefined" && window.innerWidth < 768;
 }
 
 function Sphere({ position }: { position: [number, number, number] }) {
@@ -48,27 +52,25 @@ function Sphere({ position }: { position: [number, number, number] }) {
 
   useFrame((state) => {
     if (meshRef.current) {
-      // Slower, more ominous rotation
-      meshRef.current.rotation.y += 0.005;
-      // Subtle floating effect
-      meshRef.current.position.y += Math.sin(state.clock.elapsedTime) * 0.0001;
+      meshRef.current.rotation.y += isMobile() ? 0.01 : 0.003; // Reduced rotation speed
     }
   });
 
   return (
     <mesh ref={meshRef} position={position}>
-      <sphereGeometry args={[SPHERE_RADIUS, 64, 64]} />
+      <sphereGeometry args={[SPHERE_RADIUS, 16, 16]} />{" "}
+      {/* Further reduced segments */}
       <meshPhysicalMaterial
         color="#000000"
         metalness={0}
-        roughness={0.2}
-        transmission={0.95} // Glass-like transparency
-        thickness={0.5} // Glass thickness
+        roughness={0.3}
+        transmission={0.6} // Reduced transmission
+        thickness={0.5}
         map={texture}
         emissiveMap={texture}
         emissive="#ff0000"
-        emissiveIntensity={2}
-        envMapIntensity={1}
+        emissiveIntensity={1.0} // Reduced intensity
+        envMapIntensity={0.3} // Reduced intensity
       />
     </mesh>
   );
@@ -245,12 +247,14 @@ export function GameScene({
 
   return (
     <div className="relative w-full h-full">
-      <Canvas shadows>
+      <Canvas shadows={false}>
+        {/* Disabled shadows */}
         <color attach="background" args={["#000"]} />
-        <fog attach="fog" args={["#000", 10, 35]} />
+        <fog attach="fog" args={["#000", 10, 30]} />
+        {/* Reduced fog distance */}
         <MovingCamera progress={progress} totalLevels={totalLevels} />
         <Environment preset="warehouse" />
-        <ambientLight intensity={0.05} />
+        <ambientLight intensity={0.1} />
         <pointLight position={[0, 5, 5]} intensity={0.2} color="#ff0000" />
         <SphereArrangement totalLevels={totalLevels} />
         <MistakeFlash score={progress} />
@@ -261,10 +265,10 @@ export function GameScene({
 
 function createLevelPositions() {
   const positions: [number, number, number][] = [];
-  const GRID_SIZE = 10;
+  const GRID_SIZE = isMobile() ? MOBILE_GRID_SIZE : DESKTOP_GRID_SIZE;
   const HALF_GRID = GRID_SIZE / 2;
 
-  // Create a 10x10 grid centered around 0,0
+  // Create a grid centered around 0,0
   for (let i = 0; i < GRID_SIZE; i++) {
     for (let j = 0; j < GRID_SIZE; j++) {
       const x = (i - HALF_GRID + 0.5) * SPACING;

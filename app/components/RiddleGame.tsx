@@ -5,10 +5,10 @@ import { RiddleOverlay } from "./RiddleOverlay";
 import { useRiddleLogic } from "../hooks/useRiddleLogic";
 
 export function RiddleGame() {
-  const { riddle, score, isLoading, checkAnswer, generateNewRiddle } =
-    useRiddleLogic();
-
   const totalLevels = 10;
+  const { riddle, score, isLoading, checkAnswer, generateNewRiddle } =
+    useRiddleLogic(totalLevels);
+
   const isComplete = score >= totalLevels;
 
   return (

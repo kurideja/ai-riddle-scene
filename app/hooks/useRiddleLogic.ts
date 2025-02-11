@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-export function useRiddleLogic() {
+export function useRiddleLogic(totalLevels: number) {
   const [riddle, setRiddle] = useState<{
     question: string;
     choices: string[];
@@ -12,7 +12,7 @@ export function useRiddleLogic() {
   const generateNewRiddle = useCallback(async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/api/riddle");
+      const response = await fetch(`/api/riddle?level=${score + 1}&totalLevels=${totalLevels}`);
       const data = await response.json();
       setRiddle(data);
     } catch (error) {
@@ -20,7 +20,7 @@ export function useRiddleLogic() {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [score, totalLevels]);
 
   const checkAnswer = useCallback(
     (answer: string) => {
