@@ -52,13 +52,14 @@ function Sphere({ position }: { position: [number, number, number] }) {
 
   useFrame((state) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += isMobile() ? 0.01 : 0.003; // Reduced rotation speed
+      // Use clock.elapsedTime for consistent rotation speed
+      meshRef.current.rotation.y = state.clock.elapsedTime * (isMobile() ? 0.5 : 0.3);
     }
   });
 
   return (
     <mesh ref={meshRef} position={position}>
-      <sphereGeometry args={[SPHERE_RADIUS, 16, 16]} />{" "}
+      <sphereGeometry args={[SPHERE_RADIUS, 32, 32]} />{" "}
       {/* Further reduced segments */}
       <meshPhysicalMaterial
         color="#000000"
