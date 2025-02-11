@@ -72,6 +72,3 @@ Deploy on [Vercel](https://vercel.com) for the best experience. Make sure to:
 1. Configure environment variables in your Vercel project settings
 2. Enable edge functions for optimal performance
 
-## 📄 License
-
-[Your license here]
