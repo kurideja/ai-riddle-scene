@@ -5,7 +5,7 @@ interface RiddleOverlayProps {
     question: string;
     choices: string[];
     correctIndex: number;
-  } | null;
+  } | undefined;
   score: number;
   isLoading: boolean;
   onAnswer: (answer: string) => void;

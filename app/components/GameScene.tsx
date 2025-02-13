@@ -182,22 +182,20 @@ interface GameSceneProps {
   progress: number;
   totalLevels: number;
   isComplete?: boolean;
+  shouldFlash: boolean;
 }
 
-function MistakeFlash({ score }: { score: number }) {
-  const [lastScore, setLastScore] = useState(score);
+function MistakeFlash({ shouldFlash }: { shouldFlash: boolean }) {
   const [isFlashing, setIsFlashing] = useState(false);
   const flashRef = useRef<THREE.DirectionalLight>(null);
   const startTimeRef = useRef(0);
 
   useEffect(() => {
-    if (score < lastScore) {
-      // Start flash when score decreases
+    if (shouldFlash) {
       setIsFlashing(true);
       startTimeRef.current = 0;
     }
-    setLastScore(score);
-  }, [lastScore, score]);
+  }, [shouldFlash]);
 
   useFrame((state) => {
     if (isFlashing && flashRef.current) {
@@ -233,6 +231,7 @@ export function GameScene({
   progress,
   totalLevels,
   isComplete,
+  shouldFlash,
 }: GameSceneProps) {
   if (isComplete) {
     return (
@@ -258,7 +257,7 @@ export function GameScene({
         <ambientLight intensity={0.1} />
         <pointLight position={[0, 5, 5]} intensity={0.2} color="#ff0000" />
         <SphereArrangement totalLevels={totalLevels} />
-        <MistakeFlash score={progress} />
+        <MistakeFlash shouldFlash={shouldFlash} />
       </Canvas>
     </div>
   );

@@ -1,51 +1,47 @@
 import { useState, useCallback } from "react";
+import { useRiddleQuery } from "./useRiddleQuery";
 
 export function useRiddleLogic(totalLevels: number) {
-  const [riddle, setRiddle] = useState<{
-    question: string;
-    choices: string[];
-    correctIndex: number;
-  } | null>(null);
+  const [attempts, setAttempts] = useState(0);
   const [score, setScore] = useState(0);
-  const [isLoading, setIsLoading] = useState(false);
+  const [shouldFlash, setShouldFlash] = useState(false);
 
-  const generateNewRiddle = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch(`/api/riddle?level=${score + 1}&totalLevels=${totalLevels}`);
-      const data = await response.json();
-      setRiddle(data);
-    } catch (error) {
-      console.error("Failed to fetch riddle:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [score, totalLevels]);
+  // Current riddle
+  const { data: currentRiddle, isLoading: isCurrentLoading } = useRiddleQuery(
+    attempts,
+    totalLevels
+  );
+
+  // Pre-fetch next riddle
+  useRiddleQuery(attempts + 1, totalLevels);
 
   const checkAnswer = useCallback(
     (answer: string) => {
-      if (!riddle) return;
+      if (!currentRiddle) return;
 
-      if (
+      const isCorrect =
         answer.toLowerCase() ===
-        riddle.choices[riddle.correctIndex].toLowerCase()
-      ) {
+        currentRiddle.choices[currentRiddle.correctIndex].toLowerCase();
+
+      setAttempts((prev) => prev + 1);
+
+      if (isCorrect) {
         setScore((prev) => prev + 1);
       } else {
-        // Decrease score by 2 but not below 0
-        setScore((prev) => Math.max(0, prev - 2));
+        setShouldFlash(true);
+        setTimeout(() => {
+          setShouldFlash(false);
+        }, 1000);
       }
-
-      generateNewRiddle();
     },
-    [riddle, generateNewRiddle]
+    [currentRiddle]
   );
 
   return {
-    riddle,
+    riddle: currentRiddle,
     score,
-    isLoading,
+    isLoading: isCurrentLoading,
     checkAnswer,
-    generateNewRiddle,
+    shouldFlash,
   };
 }

@@ -17,6 +17,9 @@ dependencies:
   '@react-three/fiber':
     specifier: 9.0.0-rc.7
     version: 9.0.0-rc.7(@types/react@19.0.8)(react-dom@19.0.0)(react@19.0.0)(three@0.173.0)
+  '@tanstack/react-query':
+    specifier: ^5.28.0
+    version: 5.66.0(react@19.0.0)
   class-variance-authority:
     specifier: ^0.7.1
     version: 0.7.1
@@ -730,6 +733,19 @@ packages:
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
     dependencies:
       tslib: 2.8.1
+    dev: false
+
+  /@tanstack/query-core@5.66.0:
+    resolution: {integrity: sha512-J+JeBtthiKxrpzUu7rfIPDzhscXF2p5zE/hVdrqkACBP8Yu0M96mwJ5m/8cPPYQE9aRNvXztXHlNwIh4FEeMZw==}
+    dev: false
+
+  /@tanstack/react-query@5.66.0(react@19.0.0):
+    resolution: {integrity: sha512-z3sYixFQJe8hndFnXgWu7C79ctL+pI0KAelYyW+khaNJ1m22lWrhJU2QrsTcRKMuVPtoZvfBYrTStIdKo+x0Xw==}
+    peerDependencies:
+      react: ^18 || ^19
+    dependencies:
+      '@tanstack/query-core': 5.66.0
+      react: 19.0.0
     dev: false
 
   /@tweenjs/tween.js@23.1.3:

@@ -9,35 +9,34 @@ export const runtime = "edge"; // Enable Edge Runtime for better performance
 
 export async function GET(request: Request) {
   try {
-    // Get parameters from URL
     const { searchParams } = new URL(request.url);
-    const currentLevel = parseInt(searchParams.get('level') || '1');
     const totalLevels = parseInt(searchParams.get('totalLevels') || '10');
+    const attempt = parseInt(searchParams.get('attempt') || '0');
 
     const prompt = `
-    You are a master riddle creator specializing in clever and unique word puzzles. Create an original riddle that has never been used before.
-    This is level ${currentLevel} out of ${totalLevels} total levels.
+    You are a master riddle creator specializing in engaging and fun word puzzles. Create an original riddle that has never been used before.
+    This is attempt ${attempt} for a game with ${totalLevels} total levels.
     
     Difficulty adjustment:
-    - For levels 1-${Math.floor(totalLevels * 0.3)}: Focus on straightforward wordplay and common objects
-    - For levels ${Math.floor(totalLevels * 0.3) + 1}-${Math.floor(totalLevels * 0.7)}: Introduce more complex metaphors and abstract concepts
-    - For levels ${Math.floor(totalLevels * 0.7) + 1}-${totalLevels}: Create challenging riddles with multiple layers of meaning
+    - For attempts 0-${Math.floor(totalLevels * 2)}: Create simple, straightforward riddles using common objects and basic wordplay
+    - For attempts ${Math.floor(totalLevels * 2) + 1}-${Math.floor(totalLevels * 4)}: Introduce gentle wordplay and mild misdirection
+    - For attempts ${Math.floor(totalLevels * 4) + 1}+: Add moderate complexity with clever descriptions, but keep it solvable
     
-    Focus on one of these random themes: nature, technology, everyday objects, abstract concepts, historical figures, or modern life.
-    Make sure the riddle is challenging but solvable, using wordplay, metaphors, or clever descriptions.
+    Focus on one of these accessible themes: everyday objects, simple nature elements, common activities, basic technology, or familiar places.
+    The riddle should be fun and rewarding to solve, using clear hints and relatable concepts.
     
     Rules:
-    - Avoid common riddle patterns and clichés
-    - Make it age-appropriate for teenagers and adults
-    - Use fresh and unexpected perspectives
-    - Include subtle misdirection while keeping it fair
+    - Keep the language clear and straightforward
+    - Use familiar concepts that most people encounter regularly
+    - Include gentle wordplay that guides rather than misleads
+    - Make it enjoyable for all skill levels
     
     Generate a multiple-choice question. Provide a JSON response in the following format: 
     {
       "question": "",
       "choices": ["", "", ""],
       "correctIndex": 0,
-      "level": ${currentLevel}
+      "level": ${attempt}
     }`;
 
     const response = await openai.chat.completions.create({
