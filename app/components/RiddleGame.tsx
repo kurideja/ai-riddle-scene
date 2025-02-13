@@ -11,7 +11,6 @@ export function RiddleGame() {
     score,
     isLoading,
     checkAnswer,
-    generateNewRiddle,
     shouldFlash,
   } = useRiddleLogic(totalLevels);
 
@@ -33,7 +32,6 @@ export function RiddleGame() {
         score={score}
         isLoading={isLoading}
         onAnswer={checkAnswer}
-        onNewRiddle={generateNewRiddle}
         isComplete={isComplete}
         totalLevels={totalLevels}
       />

@@ -1,15 +1,16 @@
 "use client";
 
 interface RiddleOverlayProps {
-  riddle: {
-    question: string;
-    choices: string[];
-    correctIndex: number;
-  } | undefined;
+  riddle:
+    | {
+        question: string;
+        choices: string[];
+        correctIndex: number;
+      }
+    | undefined;
   score: number;
   isLoading: boolean;
   onAnswer: (answer: string) => void;
-  onNewRiddle: () => void;
   isComplete?: boolean;
   totalLevels: number;
 }
@@ -19,7 +20,6 @@ export function RiddleOverlay({
   score,
   isLoading,
   onAnswer,
-  onNewRiddle,
   isComplete,
   totalLevels,
 }: RiddleOverlayProps) {
@@ -61,14 +61,7 @@ export function RiddleOverlay({
                 </div>
               )}
             </>
-          ) : (
-            <button
-              onClick={onNewRiddle}
-              className="w-full bg-white/10 hover:bg-white/20 px-4 py-2 rounded"
-            >
-              Start Game
-            </button>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
