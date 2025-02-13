@@ -40,7 +40,7 @@ export async function GET(request: Request) {
     }`;
 
     const response = await openai.chat.completions.create({
-      model: "gpt-4-turbo-preview",
+      model: "gpt-4o-mini",
       messages: [{ role: "system", content: prompt }],
       temperature: 1.2,
       response_format: { type: "json_object" },
